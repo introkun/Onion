@@ -47,6 +47,9 @@ INCLUDE_DIR         := $(ROOT_DIR)/include
 ifeq (,$(GTEST_INCLUDE_DIR))
 GTEST_INCLUDE_DIR = /usr/include/
 endif
+CPPCHECK_OPTS = --enable=all --inconclusive --std=c++17 --language=c++ --language=c \
+                --suppress=missingIncludeSystem --suppress=missingInclude \
+                -I $(INCLUDE_DIR) --suppressions-list=.cppcheck-suppressions.txt
 
 TOOLCHAIN := aemiii91/miyoomini-toolchain:latest
 
@@ -275,7 +278,7 @@ test: external-libs
 	cd $(BUILD_TEST_DIR) && ./test
 
 static-analysis: external-libs
-	@cd $(ROOT_DIR) && cppcheck -I $(INCLUDE_DIR) --enable=all $(SRC_DIR)
+	@cd $(ROOT_DIR) && cppcheck $(CPPCHECK_OPTS) $(SRC_DIR)
 
 format:
 	@find ./src -regex '.*\.\(c\|h\|cpp\|hpp\)' -exec clang-format -style=file -i {} \;
